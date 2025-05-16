@@ -11,13 +11,13 @@ load_dotenv()
 class GroundNewsCrew:
     """GroundNewsCrew crew"""
     def __init__(self, inputs=None):
-        kbc_api_token = os.getenv("KBC_API_TOKEN")
-        if not kbc_api_token:
-            raise EnvironmentError("KBC_API_TOKEN not found in the environment variables")
+        # kbc_api_token = os.getenv("KBC_API_TOKEN")
+        # if not kbc_api_token:
+        #     raise EnvironmentError("KBC_API_TOKEN not found in the environment variables")
 
-        kbc_api_url = os.getenv("KBC_API_URL")
-        if not kbc_api_url:
-            raise EnvironmentError("KBC_API_URL not found in the environment variables")
+        # kbc_api_url = os.getenv("KBC_API_URL")
+        # if not kbc_api_url:
+        #     raise EnvironmentError("KBC_API_URL not found in the environment variables")
 
         llm_api_key = os.getenv("OPENAI_API_KEY")
         if not llm_api_key:
@@ -29,8 +29,8 @@ class GroundNewsCrew:
 
         model = os.getenv("OPENAI_MODEL", "o3")
 
-        self.kbc_api_token = kbc_api_token
-        self.kbc_api_url = kbc_api_url
+        # self.kbc_api_token = kbc_api_token
+        # self.kbc_api_url = kbc_api_url
 
         self.llm = LLM(
             model=model,
@@ -63,6 +63,18 @@ class GroundNewsCrew:
         # We can't preload some data, etc.
         return Agent(
             config=self.agents_config["agent_example_two"],
+            tools=[],
+            verbose=True,
+            llm=self.llm
+        )
+
+    @agent
+    def agent_gender_bias(self) -> Agent:
+        """An agent that evaluates gender bias."""
+
+        # We can't preload some data, etc.
+        return Agent(
+            config=self.agents_config["agent_gender_bias"],
             tools=[],
             verbose=True,
             llm=self.llm
