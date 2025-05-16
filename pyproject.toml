@@ -1,0 +1,23 @@
+[project]
+name = "crewai-news-bias-agent-workflow"
+version = "0.1.0"
+description = "A CrewAI-powered orchestration that connects to news article input, analyzes news and bias data and prepares basic scoring. Built with modular CrewAI agent patterns."
+readme = "README.md"
+license = {file = "LICENSE"}
+
+dependencies = [
+    "chromadb~=0.6.0",
+    "crewai>=0.114.0",
+    "openai>=1.75.0",
+    "pandas>=2.2.3",
+    "pydantic>=2.11.3",
+    "python-dotenv>=1.1.0",
+    "pytz~=2025.1",
+    "requests>=2.32.3",
+    "uv>=0.6.14",
+]
+
+[project.urls]
+"Source" = "https://github.com/radektomasek/crewai-news-bias-agent-workflow.git"
+"Bug Tracker" = "https://github.com/radektomasek/crewai-news-bias-agent-workflow/issues"
+
