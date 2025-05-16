@@ -1,0 +1,43 @@
+example_download_task:
+  description: >
+    Retrieve data from an external source for further processing.
+    
+    Extract required parameters from the input, such as an identifier or path.
+    Use the appropriate tool to perform the download.
+    
+    Tool usage format:
+    
+    Do I need to use a tool? Yes  
+    Action: <tool_name>  
+    Action Input: <input_parameter>
+    
+    Return the downloaded data as your Final Answer.
+
+  expected_output: >
+    Raw data (e.g., CSV or JSON) retrieved from the external source
+
+detect_text_bias_task:
+  description: >
+    Analyze the provided textual data for potential bias, subjectivity, or unfair framing.
+    
+    IMPORTANT: DO NOT MODIFY the original text. Your job is to assess and highlight problematic patterns.
+    
+    You must:
+    
+    1. Parse the input text or list of texts (e.g., from previous task or input)
+    2. Identify language that may suggest bias — such as overly positive/negative framing, emotionally charged words, stereotypes, or imbalance in representation
+    3. For each text, determine:
+       - Whether bias is present (Yes/No)
+       - If yes, provide a short explanation of the bias detected
+    4. Use concise, neutral language in your explanations
+    5. Output each result on a new line, in the following format:
+       Bias Detected: <Yes/No>  
+       Explanation: <Short explanation or "N/A">
+    
+    REMINDER: Do not attempt to rewrite or fix the text. Focus only on detection and explanation.
+
+  expected_output: >
+    Structured response indicating whether bias was detected and why, e.g.:
+
+    Bias Detected: Yes  
+    Explanation: The text favors one demographic group while discrediting another without justification
