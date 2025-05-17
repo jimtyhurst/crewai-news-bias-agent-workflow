@@ -4,8 +4,6 @@ from crewai.llm import LLM
 from crewai.project import CrewBase, agent, crew, task
 from dotenv import load_dotenv
 
-from trust_and_bias_analysis.utils import load_yaml
-
 load_dotenv()
 
 
@@ -33,8 +31,9 @@ class GroundNewsCrew:
             base_url=llm_base_url,
         )
 
-        self.agents_config = load_yaml("trust_and_bias_analysis.config", "agents.yaml")
-        self.tasks_config = load_yaml("trust_and_bias_analysis.config", "tasks.yaml")
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.agents_config = os.path.join(current_dir, "config", "agents.yaml")
+        self.tasks_config = os.path.join(current_dir, "config", "tasks.yaml")
 
     @agent
     def gender_bias_evaluator(self) -> Agent:
