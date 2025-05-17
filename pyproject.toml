@@ -19,13 +19,16 @@ dependencies = [
     "pyyaml>=6.0"
 ]
 
-[project.urls]
-"Source" = "https://github.com/radektomasek/crewai-news-bias-agent-workflow.git"
-"Bug Tracker" = "https://github.com/radektomasek/crewai-news-bias-agent-workflow/issues"
-
 [tool.setuptools]
-packages = ["trust_and_bias_analysis", "trust_and_bias_analysis.config"]
-include-package-data = true
+py-modules = ["task_crew"]
 
-[tool.setuptools.package-data]
-"trust_and_bias_analysis.config" = ["*.yaml"]
+#[project.urls]
+#"Source" = "https://github.com/radektomasek/crewai-news-bias-agent-workflow.git"
+#"Bug Tracker" = "https://github.com/radektomasek/crewai-news-bias-agent-workflow/issues"
+#
+#[tool.setuptools]
+#packages = ["trust_and_bias_analysis", "trust_and_bias_analysis.config"]
+#include-package-data = true
+#
+#[tool.setuptools.package-data]
+#"trust_and_bias_analysis.config" = ["*.yaml"]
