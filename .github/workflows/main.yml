@@ -67,11 +67,8 @@ jobs:
           AGENT_NAME: ${{ steps.prep_agent_name.outputs.full_agent_name }}
           AGENT_DESCRIPTION: ${{ vars.AGENT_DESCRIPTION }}
           AGENT_ENTRYPOINT: ${{ vars.AGENT_ENTRYPOINT }}
-          AGENT_KBC_API_URL: ${{ vars.AGENT_KBC_API_URL }}
           AGENT_OPENAI_API_BASE: ${{ vars.AGENT_OPENAI_API_BASE }}
-          AGENT_KBC_API_TOKEN: ${{ secrets.AGENT_KBC_API_TOKEN }}
           AGENT_OPENAI_API_KEY: ${{ secrets.AGENT_OPENAI_API_KEY }}
-          AGENT_SLACK_WEBHOOK_URL: ${{ secrets.AGENT_SLACK_WEBHOOK_URL }}
           GITHUB_REPOSITORY_URL: https://github.com/${{ github.repository }}
         run: |
           echo "Generating payload for agent: $AGENT_NAME..."
@@ -151,7 +148,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      CREW_KBC_TABLE_ID: ${{ vars.CREW_KBC_TABLE_ID }}
+      CREW_INPUT_ARTICLE: ${{ vars.CREW_INPUT_ARTICLE }}
     steps:
       - uses: actions/checkout@v3
 

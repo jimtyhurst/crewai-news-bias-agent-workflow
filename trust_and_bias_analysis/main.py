@@ -12,9 +12,9 @@ def run():
     """
     Run the GroundNews Crew with command line arguments for article id.
     """
-    parser = argparse.ArgumentParser(description='Run Ground News Crew analysis')
+    parser = argparse.ArgumentParser(description='Run Ground News Crew Analysis')
     parser.add_argument(
-        '--article_input',
+        '--input_article',
         type=str,
         help='Input article for the analysis'
     )
@@ -22,11 +22,11 @@ def run():
     args = parser.parse_args()
 
     inputs = {
-        "article_input": args.article_input
+        "input_article": args.input_article
     }
 
     try:
-        print(f"Starting data analysis for Ground News with article= {args.article_input}")
+        print(f"Starting data analysis for Ground News with article= {args.input_article}")
         crew_result = GroundNewsCrew(inputs=inputs).crew().kickoff()
         print("Text Analysis completed successfully")
         print("\n\n########################")
