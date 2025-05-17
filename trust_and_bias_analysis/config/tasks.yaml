@@ -2,7 +2,7 @@ evaluate_gender_bias_task:
   description: >
     You are given the full text of a news article to analyze for gender bias:
 
-    "{input_article}"
+    "{article}"
 
     Your goal is to evaluate the article for signs of **gender bias**. Look for:
       - Reinforcement of gender stereotypes
@@ -27,7 +27,7 @@ review_ethics_task:
   description: >
     Review the following news article for potential ethical violations or risks:
 
-    "{input_article}"
+    "{article}"
 
     Refer to well-known journalism frameworks such as:
       - SPJ Code of Ethics
