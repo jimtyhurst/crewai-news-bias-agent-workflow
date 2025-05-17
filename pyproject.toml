@@ -21,3 +21,6 @@ dependencies = [
 "Source" = "https://github.com/radektomasek/crewai-news-bias-agent-workflow.git"
 "Bug Tracker" = "https://github.com/radektomasek/crewai-news-bias-agent-workflow/issues"
 
+[tool.setuptools]
+packages = ["trust_and_bias_analysis"]
+

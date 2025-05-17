@@ -1,36 +1,30 @@
 import os
-
+import yaml
 from crewai import Agent, Crew, Process, Task
 from crewai.llm import LLM
 from crewai.project import CrewBase, agent, crew, task
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv()
 
+
 @CrewBase
 class GroundNewsCrew:
-    """GroundNewsCrew crew"""
-    def __init__(self, inputs=None):
-        # kbc_api_token = os.getenv("KBC_API_TOKEN")
-        # if not kbc_api_token:
-        #     raise EnvironmentError("KBC_API_TOKEN not found in the environment variables")
+    """GroundNewsCrew: AI crew that analyzes news articles for gender bias and ethical violations."""
 
-        # kbc_api_url = os.getenv("KBC_API_URL")
-        # if not kbc_api_url:
-        #     raise EnvironmentError("KBC_API_URL not found in the environment variables")
+    def __init__(self, inputs=None):
+        self.inputs = inputs or {}
 
         llm_api_key = os.getenv("OPENAI_API_KEY")
         if not llm_api_key:
-            raise EnvironmentError("OPENAI_API_KEY not found in the environment variables")
+            raise EnvironmentError("OPENAI_API_KEY not found in environment variables")
 
         llm_base_url = os.getenv("OPENAI_API_BASE")
         if not llm_base_url:
-            raise EnvironmentError("OPENAI_API_BASE not found in the environment variables")
+            raise EnvironmentError("OPENAI_API_BASE not found in environment variables")
 
         model = os.getenv("OPENAI_MODEL", "o3")
-
-        # self.kbc_api_token = kbc_api_token
-        # self.kbc_api_url = kbc_api_url
 
         self.llm = LLM(
             model=model,
@@ -39,79 +33,67 @@ class GroundNewsCrew:
             base_url=llm_base_url,
         )
 
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.agents_config = os.path.join(current_dir, "config", "agents.yaml")
-        self.tasks_config = os.path.join(current_dir, "config", "tasks.yaml")
-        self.inputs = inputs or {}
+        project_root = Path(os.getcwd()).resolve()
+        self.agents_config = self._load_yaml(project_root / "trust_and_bias_analysis" / "config" / "agents.yaml")
+        self.tasks_config = self._load_yaml(project_root / "trust_and_bias_analysis" / "config" / "tasks.yaml")
+
+    def _load_yaml(self, path):
+        with open(path, "r") as f:
+            return yaml.safe_load(f)
 
     @agent
-    def agent_example_one(self) -> Agent:
-        """An agent example one"""
-
-        # We can't preload some data, etc.
+    def gender_bias_evaluator(self) -> Agent:
         return Agent(
-            config=self.agents_config["agent_example_one"],
+            config=self.agents_config["gender_bias_evaluator"],
             tools=[],
             verbose=True,
             llm=self.llm
         )
 
     @agent
-    def agent_example_two(self) -> Agent:
-        """An agent example two"""
-
-        # We can't preload some data, etc.
+    def journalism_bias_expert(self) -> Agent:
         return Agent(
-            config=self.agents_config["agent_example_two"],
-            tools=[],
-            verbose=True,
-            llm=self.llm
-        )
-
-    @agent
-    def agent_gender_bias(self) -> Agent:
-        """An agent that evaluates gender bias."""
-
-        # We can't preload some data, etc.
-        return Agent(
-            config=self.agents_config["agent_gender_bias"],
+            config=self.agents_config["journalism_bias_expert"],
             tools=[],
             verbose=True,
             llm=self.llm
         )
 
     @task
-    def example_download_task(self) -> Task:
-        """Task to download example"""
-        task_config = self.tasks_config["example_download_task"].copy()
+    def evaluate_gender_bias_task(self) -> Task:
+        config = self.tasks_config["evaluate_gender_bias_task"].copy()
 
-        if "description" in task_config and self.inputs:
-            task_config["description"] = task_config["description"].format(
-                **self.inputs
-            )
+        if "description" in config:
+            config["description"] = config["description"].format(**self.inputs)
 
         return Task(
-            config=task_config,
-            agent=self.agent_example_one()
+            config=config,
+            agent=self.gender_bias_evaluator()
         )
 
     @task
-    def detect_text_bias_task(self) -> Task:
-        """Task to calculate billed credits from the downloaded data"""
-        task_config = self.tasks_config["detect_text_bias_task"].copy()
+    def review_ethics_task(self) -> Task:
+        config = self.tasks_config["review_ethics_task"].copy()
+
+        if "description" in config:
+            config["description"] = config["description"].format(**self.inputs)
 
         return Task(
-            config=task_config,
-            agent=self.agent_example_two()
+            config=config,
+            agent=self.journalism_bias_expert()
         )
-
 
     @crew
     def crew(self) -> Crew:
-        """Creates the KeboolaInsightsCrew crew"""
         return Crew(
-            agents=self.agents,
-            tasks=self.tasks,
+            agents=[
+                self.gender_bias_evaluator(),
+                self.journalism_bias_expert()
+            ],
+            tasks=[
+                self.evaluate_gender_bias_task(),
+                self.review_ethics_task()
+            ],
             _inputs=self.inputs,
             process=Process.sequential,
             chat_llm=self.llm,
