@@ -1,1 +1,1 @@
-include trust_and_bias_analysis/config/*.yaml
+recursive-include trust_and_bias_analysis/config *.yaml
