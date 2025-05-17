@@ -115,10 +115,17 @@ jobs:
           AGENTIC_RUNTIME_API_TOKEN: ${{ secrets.AGENTIC_RUNTIME_API_TOKEN }}
         run: |
           echo "Creating agent runtime..."
+      
+          echo "Redacted payload being sent:"
+          jq '.envVars |= map(if .secure then .value = "***" else . end)' generated_payload.json > redacted_payload.json
+          cat redacted_payload.json
+          echo "--- END OF REDACTED PAYLOAD ---"
+      
           curl -fsS -X POST ${{ env.AGENTIC_RUNTIME_API_URL }}/api/runtimes \
             -H "Authorization: Bearer $AGENTIC_RUNTIME_API_TOKEN" \
             -H "Content-Type: application/json" \
             -d @generated_payload.json
+      
           if [ $? -ne 0 ]; then echo "::error::Failed to create agent runtime."; exit 1; fi
           echo "Agent runtime creation initiated."
 
