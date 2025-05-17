@@ -1,4 +1,6 @@
 import os
+
+import yaml
 from crewai import Agent, Crew, Process, Task
 from crewai.llm import LLM
 from crewai.project import CrewBase, agent, crew, task
@@ -32,8 +34,25 @@ class GroundNewsCrew:
         )
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.agents_config = os.path.join(current_dir, "config", "agents.yaml")
-        self.tasks_config = os.path.join(current_dir, "config", "tasks.yaml")
+        agents_config_path = os.path.join(current_dir, "config", "agents.yaml")
+        tasks_config_path = os.path.join(current_dir, "config", "tasks.yaml")
+
+        if not os.path.exists(agents_config_path):
+            print(f"Current directory: {current_dir}")
+            print(f"Config directory: {os.path.join(current_dir, 'config')}")
+            print(f"Directory contents: {os.listdir(current_dir)}")
+            if os.path.exists(os.path.join(current_dir, "config")):
+                print(f"Config directory contents: {os.listdir(os.path.join(current_dir, 'config'))}")
+            raise FileNotFoundError(f"agents.yaml not found at {agents_config_path}")
+
+        if not os.path.exists(tasks_config_path):
+            raise FileNotFoundError(f"tasks.yaml not found at {tasks_config_path}")
+
+        with open(agents_config_path, 'r') as file:
+            self.agents_config = yaml.safe_load(file)
+
+        with open(tasks_config_path, 'r') as file:
+            self.tasks_config = yaml.safe_load(file)
 
     @agent
     def gender_bias_evaluator(self) -> Agent:
