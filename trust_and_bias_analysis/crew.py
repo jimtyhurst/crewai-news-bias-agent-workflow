@@ -1,6 +1,5 @@
 import os
 
-import yaml
 from crewai import Agent, Crew, Process, Task
 from crewai.llm import LLM
 from crewai.project import CrewBase, agent, crew, task
@@ -24,13 +23,14 @@ class GroundNewsCrew:
         if not llm_base_url:
             raise EnvironmentError("OPENAI_API_BASE not found in environment variables")
 
-        model = os.getenv("OPENAI_MODEL", "o3")
+        model = os.getenv("OPENAI_MODEL", "gpt-4.1")
 
         self.llm = LLM(
             model=model,
             temperature=0.2,
             api_key=llm_api_key,
             base_url=llm_base_url,
+            stop=None
         )
 
         # Define agent configs directly from YAML content
