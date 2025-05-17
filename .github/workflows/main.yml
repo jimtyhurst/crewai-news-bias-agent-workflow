@@ -72,22 +72,36 @@ jobs:
           GITHUB_REPOSITORY_URL: https://github.com/${{ github.repository }}
         run: |
           echo "Generating payload for agent: $AGENT_NAME..."
+
+          # Fallback if description is not set
+          DEFAULT_DESCRIPTION="CrewAI agent runtime for bias and ethics evaluation"
+          FINAL_DESCRIPTION="${AGENT_DESCRIPTION:-$DEFAULT_DESCRIPTION}"
+
           jq -n --arg name "$AGENT_NAME" \
-                --arg description "$AGENT_DESCRIPTION" \
+                --arg description "$FINAL_DESCRIPTION" \
                 --arg entrypoint "$AGENT_ENTRYPOINT" \
                 --arg repo_url "$GITHUB_REPOSITORY_URL" \
                 --arg branch "${{ steps.prep_agent_name.outputs.branch_name }}" \
                 '{name: $name, description: $description, entrypoint: $entrypoint, codeSource: {type: "git", gitRepo: {url: $repo_url, branch: $branch}}, envVars: []}' > generated_payload.json
+
+          echo "Injecting environment variables..."
+
           env | grep '^AGENT_' | while IFS='=' read -r key value; do
             var_name="${key#AGENT_}"
-            if [ "$var_name" == "NAME" ]; then continue; fi 
+
+            # Skip reserved fields
+            if [[ "$var_name" =~ ^(NAME|ENTRYPOINT|DESCRIPTION|TOOLSDIRECTORY)$ ]]; then continue; fi
+
+            # Set secure flag for sensitive values
             if [[ "$var_name" =~ (TOKEN|KEY|SECRET|PASSWORD) ]]; then secure_flag=true; else secure_flag=false; fi
+
             jq --arg name "$var_name" --arg value "$value" --argjson secure "$secure_flag" \
               '.envVars += [{"name": $name, "value": $value, "secure": $secure}]' \
               generated_payload.json > temp_payload.json && mv temp_payload.json generated_payload.json
           done
+
           echo "Generated payload:"
-          cat generated_payload.json
+          jq '.envVars |= map(if .secure then .value = "***" else . end)' generated_payload.json
 
       - name: Check if Agent Runtime Exists
         id: check_runtime
